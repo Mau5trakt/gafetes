@@ -13,21 +13,58 @@
           <div class="card-body">
             <form method="POST" action="/prestamos">
               <div class="mb-3 row">
-                <label for="name" class="col-md-4 col-form-label text-md-end">Name</label>
-  
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <label for="name" class="col-md-4 col-form-label text-md-end">Nombre</label>
+
                 <div class="col-md-6">
-                  <input id="name" type="text" class="form-control" name="name" autocomplete="name" autofocus>
+                  <input id="name" type="text" class="form-control" name="nombre" autocomplete="name" autofocus>
                 </div>
               </div>
-  
+
               <div class="mb-3 row">
-                <label for="phone_number" class="col-md-4 col-form-label text-md-end">Phone Number</label>
-  
+                <label for="cedula" class="col-md-4 col-form-label text-md-end">Cedula</label>
+
                 <div class="col-md-6">
-                  <input id="phone_number" type="tel" class="form-control" name="phone_number" autocomplete="phone_number" autofocus>
+                  <input id="cedula" type="text" class="form-control" name="cedula" autofocus>
                 </div>
               </div>
-  
+
+              <div class="mb-3 row">
+                <label for="empresa" class="col-md-4 col-form-label text-md-end">Empresa</label>
+
+                <div class="col-md-6">
+                  <input id="empresa" type="text" class="form-control" name="empresa"  autofocus>
+                </div>
+              </div>
+
+              <div class="mb-3 row">
+                <label for="autoriza" class="col-md-4 col-form-label text-md-end">Autoriza</label>
+
+                <div class="col-md-6">
+                  <input id="autoriza" type="text" class="form-control" name="autoriza"  autofocus>
+                </div>
+              </div>
+
+              <div class="mb-3 row">
+                <label for="tipo" class="col-md-4 col-form-label text-md-end">Tipo</label>
+
+                <div class="col-md-6">
+                  <select name="tipo" id="grupo"  class="form-select">
+                    <option value="colaborador">Colaborador</option>
+                    <option value="staff">Staff</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="mb-3 row">
+                <label for="ngafete" class="col-md-4 col-form-label text-md-end">Numero</label>
+
+                <div class="col-md-6">
+                  <input id="ngafete" type="text" class="form-control" name="ngafete"  autofocus>
+                </div>
+              </div>
+
+
               <div class="mb-3 row">
                 <div class="col-md-6 offset-md-4">
                   <button type="submit" class="btn btn-primary">Submit</button>
