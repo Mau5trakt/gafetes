@@ -1,0 +1,51 @@
+{%extends "layout.html"%}
+
+
+{%block title%}
+Login
+{%endblock%}
+
+{%block links%}
+
+{%endblock%}
+
+{%block content%}
+<div class="container pt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">Login</div>
+          <div class="card-body">
+            <form method="POST" action="/login">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+              <div class="mb-3 row">
+                <label for="usuario" class="col-md-4 col-form-label text-md-end">Usuario</label>
+
+                <div class="col-md-6">
+                  <input id="usuario" type="usuario" class="form-control" name="usuario" autocomplete="usuario" autofocus>
+                </div>
+              </div>
+
+              <div class="mb-3 row">
+                <label for="password" class="col-md-4 col-form-label text-md-end">Contraseña</label>
+
+                <div class="col-md-6">
+                  <input id="password" type="password" class="form-control" name="password" autocomplete="password" autofocus>
+                </div>
+              </div>
+
+              <div class="mb-3 row">
+                <div class="col-md-6 offset-md-4">
+                  <button type="submit" class="btn btn-primary">Login</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{%endblock%}
+
+

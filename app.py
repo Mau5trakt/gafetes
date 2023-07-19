@@ -8,6 +8,7 @@ from flask_wtf.csrf import CSRFProtect
 from database import db
 from consultas import *
 from sqlalchemy import text
+from functions import *
 
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -35,22 +36,38 @@ csrf = CSRFProtect(app)
 def index():
     prestamos = text(inicio)
     query = db.session.execute(prestamos).fetchall()
-    resultados = db.session.query(Usuarios, Gafetes, Prestamos).join(Prestamos, Usuarios.id_usuario == Prestamos.usuario_id).join(Gafetes, Prestamos.gafete_id == Gafetes.id_gafete).all()
+   # resultados = db.session.query(Usuarios, Gafetes, Prestamos).join(Prestamos, Usuarios.id_usuario == Prestamos.usuario_id).join(Gafetes, Prestamos.gafete_id == Gafetes.id_gafete).all()
     for gafete_prestado in query:
         print("Entra al for")
         print(gafete_prestado)
 
-    for resultado in resultados:
-        print(resultado.nombre)
 
     return render_template("inicio.html")
 
-@app.route("/prueba", methods=["GET", "POST"])
-def prueba():
-    return render_template("prestamo.html")
+@app.route('/login', methods=["GET", "POST"])
+def login():
+    session.clear()
+    if request.method == "POST":
+        if not request.form.get("usuario"):
+            flash("No introdujo usuario")
+        elif not request.form.get("password"):
+            flash("No introdujo contraseña")
+        else:
+            usuario = request.form.get("usuario")
+            password = request.form.get("password")
+            usuario = Usuarios.query.filter_by(usuario=usuario).first()
+            if not usuario or not check_password_hash(usuario.hash, password) :
+                flash("Usuario o contraseña incorrecta")
+            else:
+                session["user_id"] = usuario.id_usuario
+                session["user"] = usuario.usuario
+                return redirect(url_for("index"))
+                
+    return render_template("login.html")
 
 
 @app.route("/prestamos", methods=["GET", "POST"])
+@login_required
 def prestamo():
 
     gafetes = Gafetes.query.filter()
@@ -106,6 +123,11 @@ def prestamo():
 
 
     return render_template("prestamo.html")
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("index"))
 
 if __name__ == '__main__':
     app.run()
