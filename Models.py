@@ -1,4 +1,5 @@
 from database import db
+from functions import timestamp
 
 class Usuarios(db.Model):
     id_usuario = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -24,7 +25,7 @@ class Prestamos(db.Model):
     cedula = db.Column(db.String(20))
     empresa = db.Column(db.String(100))
     autoriza = db.Column(db.String(100))
-    hora_inicio = db.Column(db.String(100))
+    hora_inicio = db.Column(db.String(100), default=timestamp())
     hora_fin = db.Column(db.String(100))
 
     usuarios = db.relationship('Usuarios', back_populates='prestamos')
