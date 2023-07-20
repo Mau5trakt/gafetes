@@ -40,39 +40,54 @@ def index():
     for gafete_prestado in query:
         print("Entra al for")
         print(gafete_prestado)
+    try:
+        loged = False
+        user = ""
+        if session["user_id"]:
+            loged = True
+            user = session["user"]
 
+    except:
+        loged = False
 
-    return render_template("inicio.html")
+    print(loged)
+    return render_template("inicio.html", loged=loged, user=user)
 
-@app.route('/login', methods=["GET", "POST"])
+@app.route('/iniciar', methods=["GET", "POST"])
 def login():
-    session.clear()
+    #session.clear()
+    print("iniciar sesion")
     if request.method == "POST":
         if not request.form.get("usuario"):
             flash("No introdujo usuario")
-        elif not request.form.get("password"):
+        if not request.form.get("password"):
             flash("No introdujo contraseña")
+
+        usuario = request.form.get("usuario")
+        password = request.form.get("password")
+        print('--------------')
+        usuario = Usuarios.query.filter_by(usuario=usuario).first()
+        if not usuario or not check_password_hash(usuario.hash, password):
+            flash("Usuario o contraseña incorrecta")
         else:
-            usuario = request.form.get("usuario")
-            password = request.form.get("password")
-            usuario = Usuarios.query.filter_by(usuario=usuario).first()
-            if not usuario or not check_password_hash(usuario.hash, password) :
-                flash("Usuario o contraseña incorrecta")
-            else:
-                session["user_id"] = usuario.id_usuario
-                session["user"] = usuario.usuario
-                return redirect(url_for("index"))
-                
+            print("llega")
+            session["user_id"] = usuario.id_usuario
+            session["user"] = usuario.usuario
+            print(session.get("user_id"))
+            return redirect("/")
+
     return render_template("login.html")
 
 
 @app.route("/prestamos", methods=["GET", "POST"])
-@login_required
+#@login_required
 def prestamo():
-
+    print(session.get("user_id"),  "***************************")
     gafetes = Gafetes.query.filter()
     for gafete in gafetes:
         print(gafete.tipo, gafete.numero, gafete.prestado)
+        
+    print(session.get("user_id"),  "***************************")
 
     if request.method == "POST":
         if not request.form.get("nombre"):
