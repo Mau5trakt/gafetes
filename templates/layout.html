@@ -46,12 +46,24 @@
           <div class="collapse navbar-collapse" id="navbarNav">
             <div class="d-flex justify-content-between w-100">
               <ul class="navbar-nav">
+
+                {% if loged %}
+                <li class="nav-item">
+                  <a class="nav-link">{{ user }}</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                  <a class="nav-link" href="/login">Iniciar Sesión</a>
+                </li>
+                {% endif %}
+
                 {%block links%}
                   <li class="nav-item">
                     <a class="nav-link" href="/">Home</a>
                   </li>
 
                 {%endblock%}
+
               </ul>
             </div>
           </div>
