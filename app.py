@@ -37,10 +37,10 @@ Session(app)
 def index():
     prestamos = text(inicio)
     query = db.session.execute(prestamos).fetchall()
-   # resultados = db.session.query(Usuarios, Gafetes, Prestamos).join(Prestamos, Usuarios.id_usuario == Prestamos.usuario_id).join(Gafetes, Prestamos.gafete_id == Gafetes.id_gafete).all()
+
     for gp in query:
-        print("Entra al for")
         print(gp.nombre_prestamo, gp.cedula, gp.empresa, gp.tipo, gp.numero)
+
     try:
         loged = False
         user = ""
@@ -56,9 +56,6 @@ def index():
 
 @app.route('/iniciar', methods=["GET", "POST"])
 def login():
-    #session.clear()
-    print(session)
-    print("iniciar sesion")
     if request.method == "POST":
         if not request.form.get("usuario"):
             flash("No introdujo usuario")
@@ -72,10 +69,8 @@ def login():
         if not usuario or not check_password_hash(usuario.hash, password):
             flash("Usuario o contraseña incorrecta")
         else:
-            print("llega")
             session["user_id"] = usuario.id_usuario
             session["user"] = usuario.usuario
-            print(session.get("user_id"))
             return redirect("/")
 
     return render_template("login.html")
@@ -85,20 +80,13 @@ def login():
 @login_required
 def prestamo():
     loged = True
-    print(session.get("user_id"),  "***************************")
-    gafetes = Gafetes.query.filter()
-    for gafete in gafetes:
-        print(gafete.tipo, gafete.numero, gafete.prestado)
-        
-    print(session.get("user_id"),  "***************************")
-    print(session)
 
     if request.method == "POST":
         if not request.form.get("nombre"):
             flash("No introdujo nombre")
         if not request.form.get("ngafete"):
             flash("Introduzca un numero de gafete")
-##4741139
+
         nombre = request.form.get("nombre")
 
         tipo = request.form.get("tipo")
@@ -129,19 +117,26 @@ def prestamo():
             db.session.add(insercion)
             db.session.commit()
 
-        #print(gafete_modificar.id_gafete)
-
-
-
-        """modificacion = Gafetes(
-            id_gafete = ngafete,
-
-        )
-        db.session.commit()"""
-
-
 
     return render_template("prestamo.html", user=session["user"], loged=loged)
+
+@app.route("/devolucion/<int:id_prestamo>")
+@login_required
+def devolucion(id_prestamo):
+    prestamo = Prestamos.query.filter_by(id_prestamo=id_prestamo).first()
+    gafete = Gafetes.query.filter_by(id_gafete=prestamo.gafete_id).first()
+
+    if prestamo and gafete:
+        print("Hay ambos")
+        prestamo.hora_fin = timestamp()
+        gafete.prestado = "0"
+        flash(f"Se ha devuelto el gafete '{gafete.tipo}: {gafete.numero}'  ")  # ex staff 5"""
+        db.session.commit()
+
+
+
+    return(redirect(url_for("index")))
+
 
 @app.route("/logout")
 def logout():
