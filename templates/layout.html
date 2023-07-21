@@ -48,23 +48,25 @@
               <ul class="navbar-nav">
 
                 {% if loged %}
-                <li class="nav-item">
-                  <a class="nav-link">{{ user }}</a>
+                    <li class="nav-item">
+                  <a class="nav-link" href="/prestamos">Prestamo</a>
                 </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/logout">Logout</a>
+                </li>
+
                 {% else %}
                 <li class="nav-item">
-                  <a class="nav-link" href="/login">Iniciar Sesión</a>
+                  <a class="nav-link" href="/iniciar">Iniciar Sesión</a>
                 </li>
                 {% endif %}
 
-                {%block links%}
-                  <li class="nav-item">
-                    <a class="nav-link" href="/">Home</a>
-                  </li>
-
-                {%endblock%}
-
               </ul>
+            {% if loged  %}
+            <div class="p-2">
+            {{ user }}
+          </div>
+            {% endif %}
             </div>
           </div>
         </div>
