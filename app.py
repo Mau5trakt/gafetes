@@ -35,13 +35,12 @@ Session(app)
 
 @app.route('/', methods=["GET", "POST"])
 def index():
-    print(session)
     prestamos = text(inicio)
     query = db.session.execute(prestamos).fetchall()
    # resultados = db.session.query(Usuarios, Gafetes, Prestamos).join(Prestamos, Usuarios.id_usuario == Prestamos.usuario_id).join(Gafetes, Prestamos.gafete_id == Gafetes.id_gafete).all()
-    for gafete_prestado in query:
+    for gp in query:
         print("Entra al for")
-        print(gafete_prestado)
+        print(gp.nombre_prestamo, gp.cedula, gp.empresa, gp.tipo, gp.numero)
     try:
         loged = False
         user = ""
@@ -53,7 +52,7 @@ def index():
         loged = False
 
     print(loged)
-    return render_template("inicio.html", loged=loged, user=user)
+    return render_template("inicio.html", loged=loged, user=user, prestamos=query)
 
 @app.route('/iniciar', methods=["GET", "POST"])
 def login():
