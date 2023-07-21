@@ -30,10 +30,12 @@ db.init_app(app)
 migrate = Migrate()
 migrate.init_app(app, db)
 csrf = CSRFProtect(app)
+Session(app)
 
 
 @app.route('/', methods=["GET", "POST"])
 def index():
+    print(session)
     prestamos = text(inicio)
     query = db.session.execute(prestamos).fetchall()
    # resultados = db.session.query(Usuarios, Gafetes, Prestamos).join(Prestamos, Usuarios.id_usuario == Prestamos.usuario_id).join(Gafetes, Prestamos.gafete_id == Gafetes.id_gafete).all()
@@ -56,6 +58,7 @@ def index():
 @app.route('/iniciar', methods=["GET", "POST"])
 def login():
     #session.clear()
+    print(session)
     print("iniciar sesion")
     if request.method == "POST":
         if not request.form.get("usuario"):
@@ -80,14 +83,16 @@ def login():
 
 
 @app.route("/prestamos", methods=["GET", "POST"])
-#@login_required
+@login_required
 def prestamo():
+    loged = True
     print(session.get("user_id"),  "***************************")
     gafetes = Gafetes.query.filter()
     for gafete in gafetes:
         print(gafete.tipo, gafete.numero, gafete.prestado)
         
     print(session.get("user_id"),  "***************************")
+    print(session)
 
     if request.method == "POST":
         if not request.form.get("nombre"):
@@ -137,7 +142,7 @@ def prestamo():
 
 
 
-    return render_template("prestamo.html")
+    return render_template("prestamo.html", user=session["user"], loged=loged)
 
 @app.route("/logout")
 def logout():
