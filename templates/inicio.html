@@ -1,46 +1,41 @@
 {%extends "layout.html"%}
 
-{%block links%}
-<li class="nav-item">
-  <a class="nav-link" href="/prestamos">Prestamo</a>
-</li>
-<li class="nav-item">
-  <a class="nav-link" href="/logout">Logout</a>
-</li>
-{%endblock%}
-
-
 
 {%block content%}
 <div class="container pt-4 p-3">
+    <div class="table-responsive">
     <table class="table table-hover">
         <thead>
           <tr>
-            <th scope="col">#</th>
-            <th scope="col">First</th>
-            <th scope="col">Last</th>
-            <th scope="col">Handle</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Tipo</th>
+            <th scope="col">Numero</th>
+            <th scope="col">Cedula</th>
+            <th scope="col">Empresa</th>
+            <th scope="col">Hora Inicio</th>
+            <th scope="col">Prestado Por</th>
+
           </tr>
         </thead>
         <tbody>
           <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
+              {% for prestamo in prestamos %}
+            <td>{{ prestamo.nombre_prestamo }}</td>
+            <td>{{ prestamo.tipo }}</td>
+            <td>{{ prestamo.numero }}</td>
+            <td>{{ prestamo.cedula }}</td>
+            <td>{{ prestamo.empresa }}</td>
+            <td>{{ prestamo.hora_inicio }}</td>
+            <td>{{ prestamo.usuario }}</td>
+                  {% if loged %}
+            <td><a href="/devolucion/{{ prestamo.id_prestamo }}"> Devolver</a></td>
+                  {% endif %}
+
           </tr>
-          <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>@fat</td>
-          </tr>
-          <tr>
-            <th scope="row">3</th>
-            <td colspan="2">Larry the Bird</td>
-            <td>@twitter</td>
-          </tr>
+          {% endfor %}
         </tbody>
       </table>
+
+</div>
 </div>
 {%endblock%}

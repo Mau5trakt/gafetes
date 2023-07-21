@@ -85,6 +85,7 @@ cred.txt
 
 flask_session/
 migrations/
+testing/
 .idea/
 # End of https://mrkandreev.name/snippets/gitignore-generator/#Flask,PyCharm+all
 migrations/versions/0d54e118b3ec_.py

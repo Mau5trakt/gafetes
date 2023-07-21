@@ -30,56 +30,63 @@ db.init_app(app)
 migrate = Migrate()
 migrate.init_app(app, db)
 csrf = CSRFProtect(app)
+Session(app)
 
 
 @app.route('/', methods=["GET", "POST"])
 def index():
     prestamos = text(inicio)
     query = db.session.execute(prestamos).fetchall()
-   # resultados = db.session.query(Usuarios, Gafetes, Prestamos).join(Prestamos, Usuarios.id_usuario == Prestamos.usuario_id).join(Gafetes, Prestamos.gafete_id == Gafetes.id_gafete).all()
-    for gafete_prestado in query:
-        print("Entra al for")
-        print(gafete_prestado)
 
+    for gp in query:
+        print(gp.nombre_prestamo, gp.cedula, gp.empresa, gp.tipo, gp.numero)
 
-    return render_template("inicio.html")
+    try:
+        loged = False
+        user = ""
+        if session["user_id"]:
+            loged = True
+            user = session["user"]
 
-@app.route('/login', methods=["GET", "POST"])
+    except:
+        loged = False
+
+    print(loged)
+    return render_template("inicio.html", loged=loged, user=user, prestamos=query)
+
+@app.route('/iniciar', methods=["GET", "POST"])
 def login():
-    session.clear()
     if request.method == "POST":
         if not request.form.get("usuario"):
             flash("No introdujo usuario")
-        elif not request.form.get("password"):
+        if not request.form.get("password"):
             flash("No introdujo contraseña")
+
+        usuario = request.form.get("usuario")
+        password = request.form.get("password")
+        print('--------------')
+        usuario = Usuarios.query.filter_by(usuario=usuario).first()
+        if not usuario or not check_password_hash(usuario.hash, password):
+            flash("Usuario o contraseña incorrecta")
         else:
-            usuario = request.form.get("usuario")
-            password = request.form.get("password")
-            usuario = Usuarios.query.filter_by(usuario=usuario).first()
-            if not usuario or not check_password_hash(usuario.hash, password) :
-                flash("Usuario o contraseña incorrecta")
-            else:
-                session["user_id"] = usuario.id_usuario
-                session["user"] = usuario.usuario
-                return redirect(url_for("index"))
-                
+            session["user_id"] = usuario.id_usuario
+            session["user"] = usuario.usuario
+            return redirect("/")
+
     return render_template("login.html")
 
 
 @app.route("/prestamos", methods=["GET", "POST"])
 @login_required
 def prestamo():
-
-    gafetes = Gafetes.query.filter()
-    for gafete in gafetes:
-        print(gafete.tipo, gafete.numero, gafete.prestado)
+    loged = True
 
     if request.method == "POST":
         if not request.form.get("nombre"):
             flash("No introdujo nombre")
         if not request.form.get("ngafete"):
             flash("Introduzca un numero de gafete")
-##4741139
+
         nombre = request.form.get("nombre")
 
         tipo = request.form.get("tipo")
@@ -110,19 +117,26 @@ def prestamo():
             db.session.add(insercion)
             db.session.commit()
 
-        #print(gafete_modificar.id_gafete)
+
+    return render_template("prestamo.html", user=session["user"], loged=loged)
+
+@app.route("/devolucion/<int:id_prestamo>")
+@login_required
+def devolucion(id_prestamo):
+    prestamo = Prestamos.query.filter_by(id_prestamo=id_prestamo).first()
+    gafete = Gafetes.query.filter_by(id_gafete=prestamo.gafete_id).first()
+
+    if prestamo and gafete:
+        print("Hay ambos")
+        prestamo.hora_fin = timestamp()
+        gafete.prestado = "0"
+        flash(f"Se ha devuelto el gafete '{gafete.tipo}: {gafete.numero}'  ")  # ex staff 5"""
+        db.session.commit()
 
 
 
-        """modificacion = Gafetes(
-            id_gafete = ngafete,
+    return(redirect(url_for("index")))
 
-        )
-        db.session.commit()"""
-
-
-
-    return render_template("prestamo.html")
 
 @app.route("/logout")
 def logout():
