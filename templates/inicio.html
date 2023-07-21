@@ -27,8 +27,10 @@
             <td>{{ prestamo.empresa }}</td>
             <td>{{ prestamo.hora_inicio }}</td>
             <td>{{ prestamo.usuario }}</td>
+                  {% if loged %}
+            <td><a href="/devolucion/{{ prestamo.id_prestamo }}"> Devolver</a></td>
+                  {% endif %}
 
-              <td><button type="button" class="btn btn-success">Devolucion</button></td>
           </tr>
           {% endfor %}
         </tbody>
